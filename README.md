@@ -1,1 +1,0 @@
-# Genereador-de-variables-aleatorias
