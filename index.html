@@ -3,159 +3,487 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador Uniforme</title>
+    <title>Generador de Variables Aleatorias</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
     <style>
-        body {
-            /* Color rosa pastel para el fondo */
-            background-color: #fdf2f8; 
+        body { 
+            background-color: #fbcfe8; /* Rosa pastel pronunciado */
+        }
+        
+        .hide-scroll::-webkit-scrollbar { height: 8px; }
+        .hide-scroll::-webkit-scrollbar-track { background: transparent; }
+        .hide-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+        .hide-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-<body class="min-h-screen font-sans text-gray-800">
+<body class="min-h-screen font-sans text-gray-800 flex flex-col items-center">
 
-    <!-- Encabezado Institucional -->
-    <header class="bg-white shadow-sm py-4 px-8 flex items-center justify-between">
-        <div class="flex items-center gap-6">
-            <!-- Logos con los nombres exactos de tu repositorio -->
-            <img src="EspochFin.png" alt="Logo ESPOCH" class="h-16 object-contain">
-            <img src="download.jpg" alt="Logo Secundario" class="h-16 object-contain">
-            <div class="border-l-2 border-gray-200 pl-6">
-                <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Desarrollado por</p>
-                <p class="text-lg font-bold text-[#1a2b4c]">Daniela Herrera Castellano</p>
+    <header class="w-full bg-white shadow-md py-4 px-6 md:px-10 flex items-center justify-between sticky top-0 z-50">
+        <div class="flex items-center gap-4 md:gap-8">
+            <div class="flex gap-4">
+                <img src="EspochFin.png" alt="Logo ESPOCH" class="h-16 object-contain" onerror="this.src='https://placehold.co/120x64/transparent/cc0000?text=ESPOCH'">
+                <img src="download.jpg" alt="Logo Secundario" class="h-16 object-contain" onerror="this.src='https://placehold.co/120x64/transparent/003366?text=LOGO'">
+            </div>
+            <div class="hidden sm:block border-l-2 border-gray-200 pl-6">
+                <p class="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1">Desarrollado por</p>
+                <p class="text-lg font-extrabold text-[#1a2b4c]">Daniela Herrera Castellano</p>
             </div>
         </div>
-        <div class="text-xl font-bold text-[#1a2b4c] hidden md:block">
-            Generador de Variables Aleatorias
+        
+        <div class="hidden xl:block absolute left-1/2 transform -translate-x-1/2">
+            <h1 class="text-2xl font-extrabold text-[#1a2b4c] tracking-tight">Generador de Variables Aleatorias</h1>
         </div>
+
         <div class="flex items-center gap-4">
-            <span class="bg-blue-100 text-blue-800 font-bold py-1 px-3 rounded-full">v5.0</span>
-            <div class="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
+            <span class="bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-sm font-bold shadow-sm">v5.0</span>
+            <div class="hidden md:flex w-12 h-12 bg-gray-100 rounded-full items-center justify-center border border-gray-200">
                 <svg class="w-6 h-6 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
             </div>
         </div>
     </header>
 
-    <!-- Contenedor Principal de la App -->
-    <main class="max-w-5xl mx-auto mt-10">
-        <!-- Tarjeta de la interfaz superior azul -->
-        <div class="bg-gradient-to-r from-blue-300 to-blue-500 rounded-t-3xl p-6 text-center text-white">
-            <p class="text-sm font-medium opacity-90 uppercase tracking-widest">Herramientas / Simulación</p>
-            <h1 class="text-3xl font-bold mt-1">Generador Uniforme</h1>
+    <main class="w-full max-w-7xl px-4 py-8 flex-grow flex flex-col">
+        
+        <div class="w-full overflow-x-auto hide-scroll pb-6 mb-2">
+            <div class="flex gap-3 w-max mx-auto px-4" id="nav-menu">
+                <!-- Botones inyectados por JS -->
+            </div>
         </div>
 
-        <!-- Tarjeta del Generador (Blanca) -->
-        <div class="bg-white rounded-b-3xl shadow-xl p-8 flex flex-col md:flex-row gap-8">
+        <div class="w-full shadow-2xl rounded-[2rem] flex flex-col bg-white border-4 border-white relative z-10 overflow-hidden">
             
-            <!-- Columna Izquierda: Explicación y Fórmula -->
-            <div class="flex-1">
-                <h2 class="text-3xl font-bold text-[#1a2b4c] mb-2">Distribución<br><span class="text-blue-600">Uniforme</span><br>a partir de U<sub>i</sub></h2>
-                <p class="text-gray-500 text-sm mb-6 mt-4 leading-relaxed">
-                    Genera números pseudoaleatorios basados en una distribución uniforme mediante la fórmula especificada. Los datos generados estarán listos para ser exportados a Excel.
-                </p>
-                
-                <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-4 inline-block">
-                    <p class="text-xs text-blue-400 font-bold uppercase tracking-wider mb-2">Fórmula Matemática</p>
-                    <p class="text-xl font-mono font-medium text-gray-700">U<sub>i</sub> = a + (b - a)r<sub>i</sub></p>
-                </div>
+            <div id="banner" class="bg-gradient-to-r from-blue-400 to-blue-600 py-4 text-center text-white transition-colors duration-500">
+                <p class="text-xs font-semibold opacity-90 uppercase tracking-widest">Herramientas / Simulación</p>
+                <h2 id="banner-title" class="text-2xl font-bold mt-1 fade-in">Generador Uniforme</h2>
             </div>
 
-            <!-- Columna Derecha: Controles -->
-            <div class="flex-1 bg-gray-50 rounded-2xl p-6 border border-gray-100">
+            <div class="p-8 md:p-12 flex flex-col lg:flex-row gap-12">
                 
-                <div class="mb-5">
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="text-sm font-semibold text-gray-700">Tipo de Variable:</label>
-                        <span class="text-xs text-gray-400">Continua / Discreta</span>
+                <!-- Columna Izquierda: Información -->
+                <div class="flex-1 flex flex-col">
+                    <!-- Título y concepto idéntico a la imagen -->
+                    <div class="mb-10">
+                        <h2 class="text-4xl md:text-5xl font-extrabold text-[#1a2b4c] leading-tight mb-6 fade-in tracking-tight">
+                            Distribución<br>
+                            <span id="dist-name" class="text-blue-600">Uniforme</span><br>
+                            a partir de <span id="dist-var">U<sub>i</sub></span>
+                        </h2>
+                        <p id="dist-desc" class="text-gray-500 text-lg md:text-xl leading-relaxed fade-in font-medium">
+                            Genera números pseudoaleatorios basados en una distribución uniforme mediante la fórmula especificada.
+                        </p>
                     </div>
-                    <div class="flex gap-2 bg-gray-200/50 p-1 rounded-lg">
-                        <button class="flex-1 bg-white text-blue-600 font-semibold py-2 rounded-md shadow-sm text-sm">Continua</button>
-                        <button class="flex-1 text-gray-500 font-semibold py-2 rounded-md text-sm hover:text-gray-700">Discreta</button>
+
+                    <div class="mt-auto">
+                        <div class="bg-blue-50/50 border border-blue-100 rounded-2xl p-6 inline-block shadow-sm">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                                <span class="text-xs font-bold text-blue-500 tracking-widest uppercase">Fórmula Matemática</span>
+                            </div>
+                            <span id="dist-formula" class="text-2xl md:text-3xl font-bold text-[#1a2b4c] font-serif italic fade-in block"></span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="mb-5 flex gap-4">
-                    <div class="flex-1">
-                        <label class="text-sm font-semibold text-gray-700 block mb-1">Límite Inf. (a)</label>
-                        <input type="number" id="limitA" placeholder="Ej: 5" class="w-full border border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400">
+                <!-- Columna Derecha: Controles -->
+                <div class="flex-1 bg-gray-50/80 rounded-3xl p-8 md:p-10 border border-gray-100 flex flex-col shadow-inner">
+                    
+                    <div class="mb-8 fade-in" id="ui-inputs">
+                        <!-- Inputs dinámicos inyectados aquí -->
                     </div>
-                    <div class="flex-1">
-                        <label class="text-sm font-semibold text-gray-700 block mb-1">Límite Sup. (b)</label>
-                        <input type="number" id="limitB" placeholder="Ej: 15" class="w-full border border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400">
-                    </div>
-                </div>
 
-                <div class="mb-6">
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="text-sm font-semibold text-gray-700">Cantidad (n):</label>
-                        <span class="text-xs text-gray-400">Datos a generar</span>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="setQuantity(10)" class="w-12 h-10 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition">10</button>
-                        <button onclick="setQuantity(50)" class="w-12 h-10 bg-white border border-gray-200 text-gray-600 font-semibold rounded-lg hover:bg-gray-50 transition">50</button>
-                        <button onclick="setQuantity(100)" class="w-12 h-10 bg-white border border-gray-200 text-gray-600 font-semibold rounded-lg hover:bg-gray-50 transition">100</button>
-                        <input type="number" id="quantity" placeholder="Custom" class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
-                    </div>
-                </div>
+                    <hr class="border-gray-200 mb-8">
 
-                <button onclick="generateData()" class="w-full bg-[#0b1120] text-white font-bold py-3 rounded-xl hover:bg-gray-800 transition flex items-center justify-center gap-2">
-                    Generar datos
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </button>
+                    <!-- Controles de Cantidad -->
+                    <div class="mb-8">
+                        <div class="flex justify-between items-end mb-4">
+                            <label class="text-sm font-semibold text-gray-700">Cantidad (n):</label>
+                            <span class="text-xs text-gray-400 font-medium">Datos a generar</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="setN(10)" class="n-btn bg-blue-600 text-white shadow-md rounded-xl px-6 py-3 text-base font-bold transition-all" data-val="10">10</button>
+                            <button onclick="setN(50)" class="n-btn bg-white border border-gray-200 text-gray-600 rounded-xl px-6 py-3 text-base font-bold hover:bg-gray-50 transition-all shadow-sm" data-val="50">50</button>
+                            <button onclick="setN(100)" class="n-btn bg-white border border-gray-200 text-gray-600 rounded-xl px-6 py-3 text-base font-bold hover:bg-gray-50 transition-all shadow-sm" data-val="100">100</button>
+                            <input type="number" id="input-n" placeholder="Custom" class="flex-1 min-w-[90px] bg-white border border-gray-200 rounded-xl px-4 py-3 text-base font-bold focus:outline-none focus:ring-2 focus:ring-blue-400 text-center shadow-sm" oninput="handleCustomN()">
+                        </div>
+                    </div>
+
+                    <div id="error-msg" class="hidden mb-6 bg-red-50 text-red-600 text-sm font-semibold px-5 py-4 rounded-xl border border-red-100 text-center"></div>
+
+                    <button onclick="generate()" class="mt-auto w-full bg-[#0b1120] hover:bg-gray-800 text-white rounded-2xl py-4 md:py-5 font-bold text-lg flex items-center justify-center gap-3 transition-transform active:scale-95 shadow-xl">
+                        Generar datos 
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Tabla de Resultados (Se mostrará al generar) -->
-        <div id="resultsContainer" class="mt-8 bg-white rounded-2xl shadow-lg p-6 hidden mb-10">
-            <h3 class="text-xl font-bold text-[#1a2b4c] mb-4">Resultados Generados</h3>
-            <div class="overflow-x-auto max-h-64 border border-gray-100 rounded-lg">
-                <table class="w-full text-sm text-left">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
+        <div id="results-container" class="mt-12 bg-white rounded-[2rem] shadow-2xl border-4 border-white overflow-hidden w-full hidden mb-12">
+            <div class="bg-gray-50 px-8 py-6 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-[#1a2b4c]">Datos Generados</h3>
+                <span id="results-badge" class="text-sm font-bold text-blue-700 bg-blue-100 px-4 py-1.5 rounded-full border border-blue-200"></span>
+            </div>
+            <div class="overflow-x-auto max-h-[600px] p-2">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-white sticky top-0 z-10">
                         <tr>
-                            <th class="px-6 py-3">i (Índice)</th>
-                            <th class="px-6 py-3">r_i (Aleatorio 0-1)</th>
-                            <th class="px-6 py-3">U_i (Valor Generado)</th>
+                            <th class="py-4 px-8 text-xs font-extrabold text-gray-400 uppercase tracking-widest w-20 border-b border-gray-100">i</th>
+                            <th class="py-4 px-8 text-xs font-extrabold text-gray-400 uppercase tracking-widest border-b border-gray-100">Aleatorio(s) r<sub>i</sub></th>
+                            <th id="results-col-name" class="py-4 px-8 text-xs font-extrabold text-blue-600 uppercase tracking-widest bg-blue-50/50 border-b border-gray-100">Valor Generado</th>
                         </tr>
                     </thead>
-                    <tbody id="resultsTableBody">
-                        <!-- Filas insertadas con JS -->
-                    </tbody>
+                    <tbody id="results-body" class="divide-y divide-gray-100"></tbody>
                 </table>
             </div>
         </div>
     </main>
 
     <script>
-        function setQuantity(val) {
-            document.getElementById('quantity').value = val;
+        const distConfig = [
+            {
+                id: 'uniforme', name: 'Uniforme', color: 'blue', varName: 'U<sub>i</sub>',
+                desc: 'Genera números pseudoaleatorios basados en una distribución uniforme mediante la fórmula especificada.',
+                formula: 'U<sub>i</sub> = a + (b - a)r<sub>i</sub>',
+                inputs: [
+                    { id: 'param_a', label: 'Límite Inferior (a)', placeholder: 'Ej: 0' },
+                    { id: 'param_b', label: 'Límite Superior (b)', placeholder: 'Ej: 10' }
+                ],
+                logic: (p) => {
+                    const r = Math.random();
+                    return { r: [r], val: p.a + (p.b - p.a) * r };
+                }
+            },
+            {
+                id: 'exponencial', name: 'Exponencial', color: 'blue', varName: 'E<sub>i</sub>',
+                desc: 'Genera valores continuos basados en una distribución exponencial a partir de la media dada, utilizando logaritmo natural.',
+                formula: 'E<sub>i</sub> = -(1/λ) ln(1 - r<sub>i</sub>)',
+                inputs: [ { id: 'param_m', label: 'Media (1/λ)', placeholder: 'Ej: 5' } ],
+                logic: (p) => {
+                    const r = Math.random();
+                    return { r: [r], val: -p.m * Math.log(1 - r) };
+                }
+            },
+            {
+                id: 'poisson', name: 'Poisson', color: 'blue', varName: 'P<sub>i</sub>',
+                desc: 'Genera valores discretos basados en una distribución de Poisson mediante un proceso iterativo de multiplicaciones aleatorias hasta alcanzar el umbral.',
+                formula: 'Iterar: T* = T*r<sub>i</sub>, hasta T* < e<sup>-λ</sup>',
+                inputs: [ { id: 'param_lambda', label: 'Media (λ)', placeholder: 'Ej: 3' } ],
+                logic: (p) => {
+                    const limit = Math.exp(-p.lambda);
+                    let count = 0; let T = 1; let rs = [];
+                    do {
+                        let r = Math.random();
+                        rs.push(r);
+                        T *= r;
+                        if(T >= limit) count++;
+                    } while (T >= limit);
+                    return { r: rs, val: count };
+                }
+            },
+            {
+                id: 'weibull', name: 'Weibull', color: 'blue', varName: 'W<sub>i</sub>',
+                desc: 'Genera valores basados en la distribución de Weibull utilizando parámetros de escala, forma y localización.',
+                formula: 'W<sub>i</sub> = γ + β * (-ln(1 - r<sub>i</sub>))<sup>1/α</sup>',
+                inputs: [
+                    { id: 'param_alpha', label: 'Forma (α)', placeholder: 'Ej: 2' },
+                    { id: 'param_beta', label: 'Escala (β)', placeholder: 'Ej: 1' },
+                    { id: 'param_gamma', label: 'Localización (γ)', placeholder: 'Ej: 0' }
+                ],
+                logic: (p) => {
+                    const r = Math.random();
+                    return { r: [r], val: p.gamma + p.beta * Math.pow(-Math.log(1 - r), 1 / p.alpha) };
+                }
+            },
+            {
+                id: 'gamma', name: 'Gamma', color: 'blue', varName: 'G<sub>i</sub>',
+                desc: 'Genera valores basados en la distribución Gamma mediante la suma de variables aleatorias exponenciales.',
+                formula: 'G<sub>i</sub> = -(1/λ) * ln(∏(1 - r<sub>i</sub>))',
+                inputs: [
+                    { id: 'param_m', label: 'Valor esperado (1/λ)', placeholder: 'Ej: 4' },
+                    { id: 'param_k', label: 'Forma (k)', placeholder: 'Ej: 3' }
+                ],
+                logic: (p) => {
+                    let prod = 1; let rs = [];
+                    for(let j=0; j<p.k; j++){
+                        const r = Math.random(); rs.push(r); prod *= (1 - r);
+                    }
+                    return { r: rs, val: -p.m * Math.log(prod) };
+                }
+            },
+            {
+                id: 'lognormal', name: 'Lognormal', color: 'blue', varName: 'LN<sub>i</sub>',
+                desc: 'Genera valores basados en la distribución Lognormal utilizando la media y varianza proporcionadas.',
+                formula: 'LN<sub>i</sub> = e<sup>N<sub>i</sub></sup>',
+                inputs: [
+                    { id: 'param_mu', label: 'Valor esperado (μ)', placeholder: 'Ej: 0' },
+                    { id: 'param_sigma2', label: 'Varianza (σ²)', placeholder: 'Ej: 1' }
+                ],
+                logic: (p) => {
+                    let sum = 0; let rs = [];
+                    for(let j=0; j<12; j++){ let r = Math.random(); rs.push(r); sum += r; }
+                    const sigma = Math.sqrt(p.sigma2);
+                    const Ni = ((sum - 6) * sigma) + p.mu;
+                    return { r: rs, val: Math.exp(Ni) };
+                }
+            },
+            {
+                id: 'bernoulli', name: 'Bernoulli', color: 'blue', varName: 'BE<sub>i</sub>',
+                desc: 'Genera valores discretos (0 o 1) basados en una distribución de Bernoulli con una probabilidad de éxito p.',
+                formula: 'BE<sub>i</sub> = 1 si r<sub>i</sub> ∈ (1-p, 1)',
+                inputs: [ { id: 'param_p', label: 'Probabilidad de éxito (p)', placeholder: 'Ej: 0.5' } ],
+                logic: (p) => {
+                    const r = Math.random();
+                    return { r: [r], val: r > (1 - p.p) ? 1 : 0 };
+                }
+            },
+            {
+                id: 'binomial', name: 'Binomial', color: 'blue', varName: 'B<sub>i</sub>',
+                desc: 'Genera valores discretos basados en una distribución Binomial, sumando variables de Bernoulli.',
+                formula: 'B<sub>i</sub> = ∑ BE<sub>j</sub>',
+                inputs: [
+                    { id: 'param_n', label: 'Número de eventos (N)', placeholder: 'Ej: 10' },
+                    { id: 'param_p', label: 'Probabilidad (p)', placeholder: 'Ej: 0.5' }
+                ],
+                logic: (p) => {
+                    let sum = 0; let rs = [];
+                    for(let j=0; j<p.n; j++){
+                        const r = Math.random(); rs.push(r);
+                        if(r > (1 - p.p)) sum += 1;
+                    }
+                    return { r: rs, val: sum };
+                }
+            },
+            {
+                id: 'chi2', name: 'Chi-cuadrada', color: 'blue', varName: 'χ²',
+                desc: 'Genera valores basados en la distribución Chi-cuadrada utilizando n grados de libertad a partir de normales estándar.',
+                formula: 'χ² = ∑ Z<sub>j</sub>²',
+                inputs: [ { id: 'param_n', label: 'Grados de libertad (n)', placeholder: 'Ej: 5' } ],
+                logic: (p) => {
+                    let sum = 0; let rs = [];
+                    for(let j=0; j<p.n; j++){
+                        let r1 = Math.random(); let r2 = Math.random();
+                        rs.push(r1); rs.push(r2);
+                        let z = Math.sqrt(-2 * Math.log(1 - r1)) * Math.cos(2 * Math.PI * r2);
+                        sum += Math.pow(z, 2);
+                    }
+                    return { r: rs, val: sum };
+                }
+            },
+            {
+                id: 'erlang', name: 'Erlang', color: 'blue', varName: 'ER<sub>i</sub>',
+                desc: 'Genera valores continuos basados en la distribución de Erlang como un caso especial de la distribución Gamma.',
+                formula: 'ER<sub>i</sub> = -(1/λ) * ln(∏(1 - r<sub>i</sub>))',
+                inputs: [
+                    { id: 'param_m', label: 'Valor esperado (1/λ)', placeholder: 'Ej: 2' },
+                    { id: 'param_k', label: 'Forma (k entero)', placeholder: 'Ej: 4' }
+                ],
+                logic: (p) => {
+                    let prod = 1; let rs = [];
+                    for(let j=0; j<p.k; j++){
+                        const r = Math.random(); rs.push(r); prod *= (1 - r);
+                    }
+                    return { r: rs, val: -p.m * Math.log(prod) };
+                }
+            },
+            {
+                id: 'normal_trig', name: 'Normal (Trig)', color: 'blue', varName: 'N<sub>i</sub>',
+                desc: 'Genera valores con distribución normal utilizando el método trigonométrico de Box-Muller.',
+                formula: 'N<sub>i</sub> = [√(-2ln(1-r<sub>1</sub>))cos(2πr<sub>2</sub>)]σ + μ',
+                inputs: [
+                    { id: 'param_mu', label: 'Media (μ)', placeholder: 'Ej: 0' },
+                    { id: 'param_sigma', label: 'Desv. Estándar (σ)', placeholder: 'Ej: 1' }
+                ],
+                logic: (p) => {
+                    let r1 = Math.random(); let r2 = Math.random();
+                    let z = Math.sqrt(-2 * Math.log(1 - r1)) * Math.cos(2 * Math.PI * r2);
+                    return { r: [r1, r2], val: (z * p.sigma) + p.mu };
+                }
+            },
+            {
+                id: 'normal_sum', name: 'Normal (Suma)', color: 'blue', varName: 'N<sub>i</sub>',
+                desc: 'Genera valores con distribución normal aproximados mediante el Teorema del Límite Central (suma de 12 uniformes).',
+                formula: 'N<sub>i</sub> = (∑r<sub>i</sub> - 6)σ + μ',
+                inputs: [
+                    { id: 'param_mu', label: 'Media (μ)', placeholder: 'Ej: 0' },
+                    { id: 'param_sigma', label: 'Desv. Estándar (σ)', placeholder: 'Ej: 1' }
+                ],
+                logic: (p) => {
+                    let sum = 0; let rs = [];
+                    for(let j=0; j<12; j++){
+                        let r = Math.random(); rs.push(r); sum += r;
+                    }
+                    return { r: rs, val: ((sum - 6) * p.sigma) + p.mu };
+                }
+            }
+        ];
+
+        let currentConfig = null;
+        let globalN = 10;
+        
+        window.onload = () => {
+            buildNavMenu();
+            selectDistribution('poisson'); // Seleccionada por defecto
+        };
+
+        function buildNavMenu() {
+            const menu = document.getElementById('nav-menu');
+            distConfig.forEach(dist => {
+                const btn = document.createElement('button');
+                btn.id = `nav-${dist.id}`;
+                btn.className = `dist-nav-btn px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border-2 border-transparent bg-white/50 text-gray-600 hover:bg-white shadow-sm flex-shrink-0`;
+                btn.innerText = dist.name;
+                btn.onclick = () => selectDistribution(dist.id);
+                menu.appendChild(btn);
+            });
         }
 
-        function generateData() {
-            const a = parseFloat(document.getElementById('limitA').value);
-            const b = parseFloat(document.getElementById('limitB').value);
-            const n = parseInt(document.getElementById('quantity').value);
+        function selectDistribution(id) {
+            currentConfig = distConfig.find(d => d.id === id);
+            
+            document.querySelectorAll('.dist-nav-btn').forEach(btn => {
+                btn.className = `dist-nav-btn px-5 py-2.5 rounded-2xl text-sm font-bold transition-all border-2 border-transparent bg-white/50 text-gray-600 hover:bg-white shadow-sm flex-shrink-0`;
+            });
+            const activeBtn = document.getElementById(`nav-${id}`);
+            activeBtn.className = `dist-nav-btn px-6 py-2.5 rounded-2xl text-sm font-extrabold transition-all border-2 border-blue-500 bg-blue-600 text-white shadow-lg flex-shrink-0`;
 
-            if (isNaN(a) || isNaN(b) || isNaN(n) || n <= 0) {
-                alert("Por favor, ingresa valores válidos para a, b y la cantidad (n).");
-                return;
+            const animElements = ['banner-title', 'dist-name', 'dist-var', 'dist-desc', 'dist-formula', 'ui-inputs'];
+            animElements.forEach(elId => {
+                const el = document.getElementById(elId);
+                el.classList.remove('fade-in');
+                void el.offsetWidth; 
+                el.classList.add('fade-in');
+            });
+
+            document.getElementById('banner-title').innerText = `Generador ${currentConfig.name}`;
+            document.getElementById('dist-name').innerText = currentConfig.name;
+            document.getElementById('dist-var').innerHTML = currentConfig.varName;
+            document.getElementById('dist-desc').innerText = currentConfig.desc;
+            document.getElementById('dist-formula').innerHTML = currentConfig.formula;
+
+            // Construir inputs dinámicamente alineados
+            const inputsContainer = document.getElementById('ui-inputs');
+            inputsContainer.innerHTML = '';
+            
+            // Grid container for inputs
+            const gridDiv = document.createElement('div');
+            gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-6';
+            
+            currentConfig.inputs.forEach(inp => {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">${inp.label}</label>
+                    <input type="number" step="any" id="${inp.id}" placeholder="${inp.placeholder}" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-400 font-bold shadow-sm text-gray-800 transition">
+                `;
+                gridDiv.appendChild(div);
+            });
+            inputsContainer.appendChild(gridDiv);
+
+            document.getElementById('results-container').classList.add('hidden');
+            hideError();
+        }
+
+        function setN(val) {
+            globalN = val;
+            document.getElementById('input-n').value = '';
+            updateNButtons(val);
+        }
+
+        function handleCustomN() {
+            const val = parseInt(document.getElementById('input-n').value);
+            if(!isNaN(val) && val > 0) {
+                globalN = val;
+                updateNButtons('custom');
+            }
+        }
+
+        function updateNButtons(activeVal) {
+            document.querySelectorAll('.n-btn').forEach(btn => {
+                if(btn.getAttribute('data-val') == activeVal) {
+                    btn.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+                    btn.classList.remove('bg-white', 'text-gray-600', 'shadow-sm');
+                } else {
+                    btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+                    btn.classList.add('bg-white', 'text-gray-600', 'shadow-sm');
+                }
+            });
+        }
+
+        function showError(msg) {
+            const err = document.getElementById('error-msg');
+            err.innerText = msg;
+            err.classList.remove('hidden');
+        }
+        
+        function hideError() { document.getElementById('error-msg').classList.add('hidden'); }
+
+        function formatRArray(rs) {
+            if(rs.length === 1) return rs[0].toFixed(5);
+            if(rs.length <= 3) return rs.map(r => r.toFixed(4)).join(', ');
+            return `<span class="text-xs text-gray-400" title="${rs.map(r=>r.toFixed(4)).join(', ')}">
+                        ${rs[0].toFixed(3)}, ${rs[1].toFixed(3)}... (${rs.length} valores)
+                    </span>`;
+        }
+
+        function generate() {
+            hideError();
+            if(isNaN(globalN) || globalN <= 0) return showError("La cantidad (n) debe ser mayor a 0.");
+
+            let params = {};
+            for(let inp of currentConfig.inputs) {
+                let val = parseFloat(document.getElementById(inp.id).value);
+                if(isNaN(val)) return showError(`Por favor ingresa un valor numérico para: ${inp.label}`);
+                params[inp.id.replace('param_', '')] = val;
             }
 
-            const tbody = document.getElementById('resultsTableBody');
-            tbody.innerHTML = ''; 
+            if(currentConfig.id === 'uniforme' && params.a >= params.b) return showError("Límite inferior (a) debe ser menor que superior (b).");
+            if(['gamma', 'erlang'].includes(currentConfig.id) && (!Number.isInteger(params.k) || params.k <= 0)) return showError("Parámetro de forma (k) debe ser entero positivo.");
+            if(currentConfig.id === 'binomial' && (!Number.isInteger(params.n) || params.n <= 0)) return showError("Número de eventos (N) debe ser entero positivo.");
+            if(['bernoulli', 'binomial'].includes(currentConfig.id) && (params.p < 0 || params.p > 1)) return showError("La probabilidad (p) debe estar entre 0 y 1.");
+            if(currentConfig.id === 'chi2' && (!Number.isInteger(params.n) || params.n <= 0)) return showError("Grados de libertad (n) debe ser entero positivo.");
 
-            for (let i = 1; i <= n; i++) {
-                const ri = Math.random(); 
-                const ui = a + (b - a) * ri; 
+            const tbody = document.getElementById('results-body');
+            let rowsHtml = '';
+            
+            try {
+                for(let i=1; i<=globalN; i++) {
+                    const result = currentConfig.logic(params);
+                    rowsHtml += `
+                        <tr class="hover:bg-blue-50/30 transition-colors">
+                            <td class="py-3 px-8 text-sm text-gray-500 font-bold border-r border-gray-100">${i}</td>
+                            <td class="py-3 px-8 text-sm text-gray-500 font-mono">${formatRArray(result.r)}</td>
+                            <td class="py-3 px-8 text-sm font-extrabold text-blue-700">${Number.isInteger(result.val) ? result.val : result.val.toFixed(5)}</td>
+                        </tr>
+                    `;
+                }
+                
+                tbody.innerHTML = rowsHtml;
+                document.getElementById('results-badge').innerText = `n = ${globalN} | ${currentConfig.name}`;
+                const container = document.getElementById('results-container');
+                container.classList.remove('hidden');
+                setTimeout(() => container.scrollIntoView({behavior: 'smooth', block: 'start'}), 100);
 
-                const row = `<tr class="bg-white border-b hover:bg-gray-50">
-                    <td class="px-6 py-2 font-medium text-gray-900">${i}</td>
-                    <td class="px-6 py-2 text-gray-500">${ri.toFixed(4)}</td>
-                    <td class="px-6 py-2 text-blue-600 font-semibold">${ui.toFixed(4)}</td>
-                </tr>`;
-                tbody.insertAdjacentHTML('beforeend', row);
+            } catch (e) {
+                showError("Error en el cálculo. Revisa los parámetros ingresados.");
+                console.error(e);
             }
-
-            document.getElementById('resultsContainer').classList.remove('hidden');
         }
     </script>
 </body>
