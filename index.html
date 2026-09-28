@@ -187,15 +187,24 @@
                 formula: 'Iterar: T* = T*r<sub>i</sub>, hasta T* < e<sup>-λ</sup>',
                 inputs: [ { id: 'param_lambda', label: 'Media (λ)', placeholder: 'Ej: 3' } ],
                 logic: (p) => {
-                    const limit = Math.exp(-p.lambda);
-                    let count = 0; let T = 1; let rs = [];
-                    do {
-                        let r = Math.random();
-                        rs.push(r);
-                        T *= r;
-                        if(T >= limit) count++;
-                    } while (T >= limit);
-                    return { r: rs, val: count };
+                    const limite = Math.exp(-p.lambda);
+                    let N = 0;
+                    let T = 1;
+                    let rs = [];
+                    
+                    let ri = Math.random();
+                    rs.push(ri);
+                    let T_prime = T * ri;
+                    
+                    while (T_prime >= limite) {
+                        N = N + 1;
+                        T = T_prime;
+                        ri = Math.random();
+                        rs.push(ri);
+                        T_prime = T * ri;
+                    }
+                    
+                    return { r: rs, val: N };
                 }
             },
             {
