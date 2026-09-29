@@ -245,14 +245,27 @@
                 desc: 'Genera valores basados en la distribución Lognormal utilizando la media y varianza proporcionadas.',
                 formula: 'LN<sub>i</sub> = e<sup>N<sub>i</sub></sup>',
                 inputs: [
-                    { id: 'param_mu', label: 'Valor esperado (μ)', placeholder: 'Ej: 0' },
+                    { id: 'param_mu', label: 'Valor esperado (μ>0)', placeholder: 'Ej: 10' },
                     { id: 'param_sigma2', label: 'Varianza (σ²)', placeholder: 'Ej: 1' }
                 ],
                 logic: (p) => {
+                    if (p.mu === 0) {
+                        throw new Error("Para esta fórmula, la Media (μ) debe ser mayor a 0.");
+                    }
+
                     let sum = 0; let rs = [];
-                    for(let j=0; j<12; j++){ let r = Math.random(); rs.push(r); sum += r; }
-                    const sigma = Math.sqrt(p.sigma2);
-                    const Ni = ((sum - 6) * sigma) + p.mu;
+                    for(let j=0; j<12; j++){ 
+                        let r = Math.random(); 
+                        rs.push(r); 
+                        sum += r;
+                }
+                    const sumatoria = sum - 6;
+                    const raizLog = Math.sqrt(Math.log(1 + (p.sigma2 / Math.pow(p.mu, 2))));
+                    const logFraccion = Math.log(Math.pow(p.mu, 2) / Math.sqrt(Math.pow(p.mu, 2) + p.sigma2));
+                    
+                    // Cálculo final de Ni y LNi
+                    const Ni = (sumatoria * raizLog) + logFraccion;
+                    
                     return { r: rs, val: Math.exp(Ni) };
                 }
             },
