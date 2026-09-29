@@ -227,7 +227,7 @@
             {
                 id: 'gamma', name: 'Gamma', color: 'blue', varName: 'G<sub>i</sub>',
                 desc: 'Genera valores basados en la distribución Gamma mediante la suma de variables aleatorias exponenciales.',
-                formula: 'G<sub>i</sub> = -(1/λ) * ln(∏(1 - r<sub>i</sub>))',
+                formula: 'G<sub>i</sub> = -(1/kλ) * ln(∏(1 - r<sub>i</sub>))',
                 inputs: [
                     { id: 'param_m', label: 'Valor esperado (1/λ)', placeholder: 'Ej: 4' },
                     { id: 'param_k', label: 'Forma (k)', placeholder: 'Ej: 3' }
@@ -237,7 +237,7 @@
                     for(let j=0; j<p.k; j++){
                         const r = Math.random(); rs.push(r); prod *= (1 - r);
                     }
-                    return { r: rs, val: -p.m * Math.log(prod) };
+                    return { r: rs, val: -(p.m/p.k) * Math.log(prod) };
                 }
             },
             {
