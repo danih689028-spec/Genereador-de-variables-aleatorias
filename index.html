@@ -49,8 +49,10 @@
             </div>
         </div>
         
-       <div class="hidden lg:block flex-1 px-8 text-center min-w-0">
-           <h1 class="text-lg xl:text-2xl font-extrabold text-[#1a2b4c] tracking-widest uppercase truncate">GENERADOR DE VARIABLES ALEATORIAS</h1>
+       <div class="hidden lg:block absolute left-1/2 transform -translate-x-1/2 text-center">
+           <h1 class="text-xl font-extrabold text-[#1a2b4c] tracking-widest uppercase leading-tight">
+               GENERADOR DE VARIABLES<br>ALEATORIAS
+           </h1>
         </div>
 
         <div class="flex items-center gap-4">
@@ -184,7 +186,7 @@
             {
                 id: 'poisson', name: 'Poisson', color: 'blue', varName: 'P<sub>i</sub>',
                 desc: 'Genera valores discretos basados en una distribución de Poisson mediante un proceso iterativo de multiplicaciones aleatorias hasta alcanzar el umbral.',
-                formula: "Iterar: T' = (T)(r<sub>i</sub>), hasta T' < e<sup>-λ</sup>",,
+                formula: "Iterar: T' = T'r<sub>i</sub>, hasta T' < e<sup>-λ</sup>",
                 inputs: [ { id: 'param_lambda', label: 'Media (λ)', placeholder: 'Ej: 3' } ],
                 logic: (p) => {
                     const limite = Math.exp(-p.lambda);
