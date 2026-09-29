@@ -56,7 +56,7 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <span class="bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-sm font-bold shadow-sm">v1.0</span>
+            <span class="bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-sm font-bold shadow-sm">v1.1</span>
             <div class="hidden md:flex w-12 h-12 bg-gray-100 rounded-full items-center justify-center border border-gray-200">
                 <svg class="w-6 h-6 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
             </div>
@@ -82,7 +82,6 @@
                 
                 <!-- Columna Izquierda: Información -->
                 <div class="flex-1 flex flex-col">
-                    <!-- Título y concepto idéntico a la imagen -->
                     <div class="mb-10">
                         <h2 class="text-4xl md:text-5xl font-extrabold text-[#1a2b4c] leading-tight mb-6 fade-in tracking-tight">
                             Distribución<br>
@@ -150,13 +149,9 @@
                 </div>
             </div>
             <div class="overflow-x-auto max-h-[600px] p-2">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-white sticky top-0 z-10">
-                        <tr>
-                            <th class="py-4 px-8 text-xs font-extrabold text-gray-400 uppercase tracking-widest w-20 border-b border-gray-100">i</th>
-                            <th class="py-4 px-8 text-xs font-extrabold text-gray-400 uppercase tracking-widest border-b border-gray-100">Aleatorio(s) r<sub>i</sub></th>
-                            <th id="results-col-name" class="py-4 px-8 text-xs font-extrabold text-blue-600 uppercase tracking-widest bg-blue-50/50 border-b border-gray-100">Valor Generado</th>
-                        </tr>
+                <table class="w-full text-left border-collapse" id="results-table">
+                    <thead class="bg-white sticky top-0 z-10" id="results-head">
+                        <!-- Cabecera inyectada dinámicamente -->
                     </thead>
                     <tbody id="results-body" class="divide-y divide-gray-100"></tbody>
                 </table>
@@ -399,7 +394,6 @@
             const inputsContainer = document.getElementById('ui-inputs');
             inputsContainer.innerHTML = '';
             
-            // Grid container for inputs
             const gridDiv = document.createElement('div');
             gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-6';
             
@@ -451,14 +445,6 @@
         
         function hideError() { document.getElementById('error-msg').classList.add('hidden'); }
 
-        function formatRArray(rs) {
-            if(rs.length === 1) return rs[0].toFixed(5);
-            if(rs.length <= 3) return rs.map(r => r.toFixed(4)).join(', ');
-            return `<span class="text-xs text-gray-400" title="${rs.map(r=>r.toFixed(4)).join(', ')}">
-                        ${rs[0].toFixed(3)}, ${rs[1].toFixed(3)}... (${rs.length} valores)
-                    </span>`;
-        }
-
         function generate() {
             hideError();
             if(isNaN(globalN) || globalN <= 0) return showError("La cantidad (n) debe ser mayor a 0.");
@@ -476,20 +462,52 @@
             if(['bernoulli', 'binomial'].includes(currentConfig.id) && (params.p < 0 || params.p > 1)) return showError("La probabilidad (p) debe estar entre 0 y 1.");
             if(currentConfig.id === 'chi2' && (!Number.isInteger(params.n) || params.n <= 0)) return showError("Grados de libertad (n) debe ser entero positivo.");
 
+            const thead = document.getElementById('results-head');
             const tbody = document.getElementById('results-body');
-            let rowsHtml = '';
+            
+            let rowsData = [];
+            let maxR = 1;
             
             try {
+                // 1. Generar todos los datos y calcular el ancho máximo de columnas "r"
                 for(let i=1; i<=globalN; i++) {
                     const result = currentConfig.logic(params);
+                    rowsData.push(result);
+                    if (result.r.length > maxR) {
+                        maxR = result.r.length;
+                    }
+                }
+
+                // 2. Construir los encabezados dinámicos de la tabla
+                let headerHtml = `<tr>
+                    <th class="py-4 px-8 text-xs font-extrabold text-gray-400 uppercase tracking-widest w-20 border-b border-gray-100">i</th>`;
+                for(let j = 1; j <= maxR; j++) {
+                    headerHtml += `<th class="py-4 px-8 text-xs font-extrabold text-gray-400 uppercase tracking-widest border-b border-gray-100 whitespace-nowrap">r<sub>${j}</sub></th>`;
+                }
+                headerHtml += `<th class="py-4 px-8 text-xs font-extrabold text-blue-600 uppercase tracking-widest bg-blue-50/50 border-b border-gray-100 whitespace-nowrap">Valor Generado</th>
+                </tr>`;
+                thead.innerHTML = headerHtml;
+
+                // 3. Construir el cuerpo de la tabla ubicando cada "r" en su propia columna
+                let rowsHtml = '';
+                rowsData.forEach((data, index) => {
+                    let rCells = '';
+                    for(let j = 0; j < maxR; j++) {
+                        if (data.r[j] !== undefined) {
+                            rCells += `<td class="py-3 px-8 text-sm text-gray-500 font-mono border-r border-gray-100 whitespace-nowrap">${data.r[j].toFixed(5)}</td>`;
+                        } else {
+                            rCells += `<td class="py-3 px-8 text-sm text-gray-300 font-mono border-r border-gray-100 text-center">-</td>`;
+                        }
+                    }
+
                     rowsHtml += `
                         <tr class="hover:bg-blue-50/30 transition-colors">
-                            <td class="py-3 px-8 text-sm text-gray-500 font-bold border-r border-gray-100">${i}</td>
-                            <td class="py-3 px-8 text-sm text-gray-500 font-mono">${formatRArray(result.r)}</td>
-                            <td class="py-3 px-8 text-sm font-extrabold text-blue-700">${Number.isInteger(result.val) ? result.val : result.val.toFixed(5)}</td>
+                            <td class="py-3 px-8 text-sm text-gray-500 font-bold border-r border-gray-100">${index + 1}</td>
+                            ${rCells}
+                            <td class="py-3 px-8 text-sm font-extrabold text-blue-700 bg-blue-50/10 whitespace-nowrap">${Number.isInteger(data.val) ? data.val : data.val.toFixed(5)}</td>
                         </tr>
                     `;
-                }
+                });
                 
                 tbody.innerHTML = rowsHtml;
                 document.getElementById('results-badge').innerText = `n = ${globalN} | ${currentConfig.name}`;
@@ -503,17 +521,22 @@
             }
         }
 
-        // Nueva función agregada para copiar los datos de la tabla al portapapeles
+        // Función de copiado mejorada para exportar todas las columnas dinámicas a Excel
         function copiarDatos() {
+            const theadTr = document.querySelector('#results-head tr');
             const rows = document.querySelectorAll('#results-body tr');
             if(rows.length === 0) return showError("No hay datos para copiar.");
             
-            // Usamos \t (tabulación) para que se pegue bien en las celdas de Excel
-            let texto = "i\tAleatorio(s) r_i\tValor Generado\n";
+            let texto = "";
             
+            // Extraer y formatear cabeceras con tabulaciones
+            const headers = Array.from(theadTr.querySelectorAll('th')).map(th => th.innerText);
+            texto += headers.join("\t") + "\n";
+            
+            // Extraer celdas fila por fila
             rows.forEach(row => {
-                const cols = row.querySelectorAll('td');
-                texto += `${cols[0].innerText}\t${cols[1].innerText}\t${cols[2].innerText}\n`;
+                const cols = Array.from(row.querySelectorAll('td')).map(td => td.innerText);
+                texto += cols.join("\t") + "\n";
             });
             
             navigator.clipboard.writeText(texto).then(() => {
