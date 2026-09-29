@@ -139,9 +139,15 @@
         </div>
 
         <div id="results-container" class="mt-12 bg-white rounded-[2rem] shadow-2xl border-4 border-white overflow-hidden w-full hidden mb-12">
-            <div class="bg-gray-50 px-8 py-6 border-b border-gray-100 flex justify-between items-center">
+            <div class="bg-gray-50 px-8 py-6 border-b border-gray-100 flex justify-between items-center flex-wrap gap-4">
                 <h3 class="text-xl font-bold text-[#1a2b4c]">Datos Generados</h3>
-                <span id="results-badge" class="text-sm font-bold text-blue-700 bg-blue-100 px-4 py-1.5 rounded-full border border-blue-200"></span>
+                <div class="flex items-center gap-4">
+                    <span id="results-badge" class="text-sm font-bold text-blue-700 bg-blue-100 px-4 py-1.5 rounded-full border border-blue-200"></span>
+                    <button onclick="copiarDatos()" id="btn-copiar" class="bg-[#1a2b4c] hover:bg-blue-800 text-white text-sm font-bold py-2 px-4 rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        Copiar
+                    </button>
+                </div>
             </div>
             <div class="overflow-x-auto max-h-[600px] p-2">
                 <table class="w-full text-left border-collapse">
@@ -495,6 +501,39 @@
                 showError("Error en el cálculo. Revisa los parámetros ingresados.");
                 console.error(e);
             }
+        }
+
+        // Nueva función agregada para copiar los datos de la tabla al portapapeles
+        function copiarDatos() {
+            const rows = document.querySelectorAll('#results-body tr');
+            if(rows.length === 0) return showError("No hay datos para copiar.");
+            
+            // Usamos \t (tabulación) para que se pegue bien en las celdas de Excel
+            let texto = "i\tAleatorio(s) r_i\tValor Generado\n";
+            
+            rows.forEach(row => {
+                const cols = row.querySelectorAll('td');
+                texto += `${cols[0].innerText}\t${cols[1].innerText}\t${cols[2].innerText}\n`;
+            });
+            
+            navigator.clipboard.writeText(texto).then(() => {
+                const btn = document.getElementById('btn-copiar');
+                const originalHtml = btn.innerHTML;
+                
+                // Efecto visual de confirmación
+                btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> ¡Copiado!`;
+                btn.classList.replace('bg-[#1a2b4c]', 'bg-green-600');
+                btn.classList.replace('hover:bg-blue-800', 'hover:bg-green-700');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.classList.replace('bg-green-600', 'bg-[#1a2b4c]');
+                    btn.classList.replace('hover:bg-green-700', 'hover:bg-blue-800');
+                }, 2000);
+            }).catch(err => {
+                console.error("Error al copiar: ", err);
+                showError("Tu navegador bloqueó el copiado al portapapeles.");
+            });
         }
     </script>
 </body>
